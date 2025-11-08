@@ -8,9 +8,9 @@ import {
   ChevronRight,
   Home,
   CreditCard,
-  User,
   Settings,
   Bot,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAdminStatus } from "@/hooks/use-admin-status";
 
 type SidebarProps = {
   collapsed: boolean;
@@ -30,10 +31,16 @@ export const navigationItems = [
   { name: "Painel", href: "/dashboard", icon: Home },
   { name: "Chat com IA", href: "/ai-chat", icon: Bot },
   { name: "Cobrança", href: "/billing", icon: CreditCard },
- ];
+];
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
+  const { isAdmin } = useAdminStatus();
+
+  const navigation = [...navigationItems];
+  if (isAdmin) {
+    navigation.push({ name: "Admin", href: "/admin", icon: Shield });
+  }
 
   return (
     <aside
@@ -67,7 +74,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       
       <ScrollArea className="flex-1 min-h-0">
         <nav className="flex flex-col gap-1 p-2" aria-label="Navegação principal">
-          {navigationItems.map((item) => {
+          {navigation.map((item) => {
             const isActive = pathname === item.href;
             const link = (
               <Link

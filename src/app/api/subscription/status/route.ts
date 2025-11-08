@@ -66,8 +66,12 @@ async function handleSubscriptionStatus() {
       orderBy: { occurredAt: 'desc' },
       select: { status: true, planKey: true },
     })
-    if (latest && (latest.status === 'active')) {
+    if (latest && latest.status === 'active') {
       return NextResponse.json({ isActive: true, plan: latest.planKey ?? null })
+    }
+    // If no subscription event is found, assume the user is on a default/free plan.
+    if (!latest) {
+      return NextResponse.json({ isActive: true, plan: 'free' })
     }
     return NextResponse.json({ isActive: false })
   } catch {
